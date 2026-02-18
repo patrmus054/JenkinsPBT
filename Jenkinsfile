@@ -1,13 +1,8 @@
 pipeline {
   agent any
+
   stages {
     stage('build') {
-      agent {
-        docker {
-          image 'maven:3.6-jdk-11-slim'
-        }
-
-      }
       steps {
         sh '''ls -la
         mvn install -DskipTests
@@ -19,12 +14,6 @@ pipeline {
     stage('paralleltests') {
       parallel {
         stage('slowtests') {
-          agent {
-            docker {
-              image 'maven:3.6-jdk-11-slim'
-            }
-
-          }
           steps {
             unstash 'build'
             sh '''ls -la
@@ -37,7 +26,7 @@ pipeline {
           steps {
             unstash 'build'
             sh '''ls -la
-            ./mvnw test -Dgroups="fast"
+            mvn test -Dgroups="fast"
             ls -la'''
           }
         }
@@ -47,7 +36,7 @@ pipeline {
     stage('sonarqube') {
       steps {
         withSonarQubeEnv('SonarQube') {
-          sh './mvnw sonar:sonar'
+          sh 'mvn sonar:sonar'
         }
 
       }
@@ -60,12 +49,6 @@ pipeline {
     }
 
     stage('heyqaguysandgals') {
-      agent {
-        docker {
-          image 'openjdk:latest'
-          args '-p 8085:8085'
-        }
-      }
       steps {
         unstash 'build'
         sh '''
