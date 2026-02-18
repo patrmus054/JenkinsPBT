@@ -1,13 +1,12 @@
 pipeline {
   agent any
+  
+  tools {
+    maven 'Maven3'
+  }
+  
   stages {
-    stage('build') {
-      agent {
-        docker {
-          image 'maven:3.6-jdk-11-slim'
-        }
-
-      }
+    stage('Build') {
       steps {
         sh '''ls -la
         mvn install -DskipTests
@@ -16,56 +15,40 @@ pipeline {
       }
     }
 
-    stage('paralleltests') {
+    stage('Parallel Tests') {
       parallel {
-        stage('slowtests') {
-          agent {
-            docker {
-              image 'maven:3.6-jdk-11-slim'
-            }
-
-          }
+        stage('Slow Tests') {
           steps {
             unstash 'build'
-            sh '''ls -la
-            mvn test -Dgroups="slow"
-            ls -la'''
+            sh 'mvn test -Dgroups="slow"'
           }
         }
 
-        stage('fasttests') {
+        stage('Fast Tests') {
           steps {
             unstash 'build'
-            sh '''ls -la
-            ./mvnw test -Dgroups="fast"
-            ls -la'''
+            sh 'mvn test -Dgroups="fast"'
           }
         }
       }
     }
 
-    stage('sonarqube') {
+    stage('SonarQube Analysis') {
       steps {
         withSonarQubeEnv('SonarQube') {
-          sh './mvnw sonar:sonar'
+          sh 'mvn verify sonar:sonar'
         }
 
       }
     }
 
-    stage('awaitingonarqube') {
+    stage('Quality Gate') {
       steps {
-        waitForQualityGate true
+        waitForQualityGate abortPipeline: true
       }
     }
 
-    stage('heyqaguysandgals') {
-      agent {
-        docker {
-          image 'openjdk:latest'
-          args '-p 8085:8085'
-        }
-      }
+    stage('QA Verification') {
       steps {
         unstash 'build'
         sh '''
@@ -76,16 +59,15 @@ pipeline {
       }
     }
 
-    stage('dockerbuildandpushit') {
+    stage('Docker Build and Push') {
       environment {
         DOCKER_HUB_LOGIN = credentials('docker-hub')
       }
       steps {
         sh '''
-          ls -la
           docker login --username=$DOCKER_HUB_LOGIN_USR --password=$DOCKER_HUB_LOGIN_PSW
-          docker build -t jenkins/test1:v1 .
-          docker push jenkins/test1:v1
+          docker build -t $DOCKER_HUB_LOGIN_USR/demo:v1 .
+          docker push $DOCKER_HUB_LOGIN_USR/demo:v1
         '''
       }
     }
