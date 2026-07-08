@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO App</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        h1 { color: #111827; }
+        .todo-form { display: flex; gap: 10px; margin-bottom: 20px; }
+        .todo-form input { flex: 1; padding: 10px; font-size: 16px; border: 1px solid #d1d5db; border-radius: 4px; }
+        .todo-form button { padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        .todo-form button:hover { background: #1d4ed8; }
+        .todo-list { list-style: none; padding: 0; }
+        .todo-item { display: flex; align-items: center; gap: 10px; padding: 12px; border-bottom: 1px solid #e5e7eb; }
+        .todo-item.completed span { text-decoration: line-through; color: #9ca3af; }
+        .todo-item span { flex: 1; font-size: 16px; }
+        .todo-item button { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .todo-item button:hover { background: #dc2626; }
+    </style>
+</head>
+<body>
+    <h1>TODO List</h1>
+    <div class="todo-form">
+        <input type="text" id="todoInput" placeholder="Dodaj nowe zadanie..." data-cy="todo-input">
+        <button onclick="addTodo()" data-cy="add-btn">Dodaj</button>
+    </div>
+    <ul class="todo-list" id="todoList" data-cy="todo-list"></ul>
+
+    <script>
+        const API = '/api/todos';
+
+        async function loadTodos() {
+            const res = await fetch(API);
+            const todos = await res.json();
+            const list = document.getElementById('todoList');
+            list.innerHTML = '';
+            todos.forEach(todo => {
+                const li = document.createElement('li');
+                li.className = 'todo-item' + (todo.completed ? ' completed' : '');
+                li.setAttribute('data-cy', 'todo-item');
+                li.innerHTML = `
+                    <input type="checkbox" ${todo.completed ? 'checked' : ''} 
+                           onchange="toggleTodo(${todo.id}, this.checked)" data-cy="todo-checkbox">
+                    <span data-cy="todo-title">${todo.title}</span>
+                    <button onclick="deleteTodo(${todo.id})" data-cy="delete-btn">Usuń</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        async function addTodo() {
+            const input = document.getElementById('todoInput');
+            const title = input.value.trim();
+            if (!title) return;
+            await fetch(API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, completed: false })
+            });
+            input.value = '';
+            loadTodos();
+        }
+
+        async function toggleTodo(id, completed) {
+            const res = await fetch(API);
+            const todos = await res.json();
+            const todo = todos.find(t => t.id === id);
+            await fetch(`${API}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...todo, completed })
+            });
+            loadTodos();
+        }
+
+        async function deleteTodo(id) {
+            await fetch(`${API}/${id}`, { method: 'DELETE' });
+            loadTodos();
+        }
+
+        document.getElementById('todoInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTodo();
+        });
+
+        loadTodos();
+    </script>
+</body>
+</html>

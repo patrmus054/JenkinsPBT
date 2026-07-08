@@ -1,0 +1,60 @@
+<h1 style="font-family: 'Segoe UI', sans-serif; font-size: 42px; color: #111827; margin-bottom: 5px;">Appendix:
+    Production Readiness Checklist</h1>
+<h2
+    style="font-family: 'Segoe UI', sans-serif; font-size: 22px; color: #4b5563; font-weight: 400; margin-bottom: 25px;">
+    Verify your pipelines against enterprise-grade delivery standards before rolling out</h2>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-family: 'Segoe UI', sans-serif;">
+
+    <!-- Left Column -->
+    <div style="display: flex; flex-direction: column; gap: 15px;">
+        <div
+            style="background-color: #ffffff; padding: 15px; border-left: 5px solid #10b981; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <input type="checkbox" checked disabled
+                style="transform: scale(1.4); margin-right: 10px; accent-color: #10b981;">
+            <strong style="font-size: 18px; color: #111827;">No Controller Execution</strong>
+            <p style="font-size: 15px; color: #4b5563; margin: 5px 0 0 25px;">Controller executors set to 0. Works run
+                exclusively on isolated node pools.</p>
+        </div>
+
+        <div
+            style="background-color: #ffffff; padding: 15px; border-left: 5px solid #10b981; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <input type="checkbox" checked disabled
+                style="transform: scale(1.4); margin-right: 10px; accent-color: #10b981;">
+            <strong style="font-size: 18px; color: #111827;">Pipeline as Code Only</strong>
+            <p style="font-size: 15px; color: #4b5563; margin: 5px 0 0 25px;">Zero inline UI scripts. 100% of pipeline
+                tracking is driven by Git-versioned Jenkinsfiles.</p>
+        </div>
+
+        <div
+            style="background-color: #ffffff; padding: 15px; border-left: 5px solid #10b981; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <input type="checkbox" checked disabled
+                style="transform: scale(1.4); margin-right: 10px; accent-color: #10b981;">
+            <strong style="font-size: 18px; color: #111827;">Strict Secret Isolation</strong>
+            <p style="font-size: 15px; color: #4b5563; margin: 5px 0 0 25px;">Credentials Plugin injects tokens
+                dynamically. No plaintext secrets in repo code.</p>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div style="display: flex; flex-direction: column; gap: 15px;">
+        <div
+            style="background-color: #ffffff; padding: 15px; border-left: 5px solid #10b981; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <input type="checkbox" checked disabled
+                style="transform: scale(1.4); margin-right: 10px; accent-color: #10b981;">
+            <strong style="font-size: 18px; color: #111827;">Workspace Sanitization</strong>
+            <p style="font-size: 15px; color: #4b5563; margin: 5px 0 0 25px;">Mandatory <code>post { always { cleanWs() } }</a> block enabled to protect agent storage pools.</p>
+        </div>
+
+        <div style="background-color: #ffffff; padding: 15px; border-left: 5px solid #10b981; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <input type="checkbox" checked disabled style="transform: scale(1.4); margin-right: 10px; accent-color: #10b981;">
+            <strong style="font-size: 18px; color: #111827;">Push-Based Webhooks</strong>
+            <p style="font-size: 15px; color: #4b5563; margin: 5px 0 0 25px;">Active push webhooks configured from Git server. Resource-draining SCM Polling is disabled.</p>
+        </div>
+
+        <div style="background-color: #ffffff; padding: 15px; border-left: 5px solid #10b981; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <input type="checkbox" checked disabled style="transform: scale(1.4); margin-right: 10px; accent-color: #10b981;">
+            <strong style="font-size: 18px; color: #111827;">Shift-Left Vulnerability Scanning</strong>
+            <p style="font-size: 15px; color: #4b5563; margin: 5px 0 0 25px;">Container and package vulnerability gates integrated early, before artifact release stages.</p>
+        </div>
+    </div>

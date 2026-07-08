@@ -1,6 +1,12 @@
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 
+### Node / Cypress ###
+node_modules/
+cypress/screenshots/
+cypress/videos/
+cypress/results/
+
 ### STS ###
 .apt_generated
 .classpath

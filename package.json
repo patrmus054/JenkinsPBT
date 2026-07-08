@@ -1,0 +1,24 @@
+{
+  "name": "project2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patrmus054/JenkinsPBT.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/patrmus054/JenkinsPBT/issues"
+  },
+  "homepage": "https://github.com/patrmus054/JenkinsPBT#readme",
+  "devDependencies": {
+    "cypress": "^15.18.1"
+  }
+}
